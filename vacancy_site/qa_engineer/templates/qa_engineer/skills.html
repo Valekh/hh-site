@@ -1,0 +1,47 @@
+{% extends "qa_engineer/base.html" %}
+{% load static %}
+{% block title %} Навыки {% endblock %}
+{% block section1 %}
+    <section class="page-intro">
+        <div class="container">
+            <div class="page-intro__row">
+                <h1>Навыки</h1>
+            </div>
+        </div>
+        <div class="page-intro__bg">
+            <div class="container">
+                <div class="page-intro__img">
+                    <picture>
+                        <source srcset="{% static 'qa_engineer/img/skills/intro.webp' %}" type="image/webp">
+                        <img src="{% static 'qa_engineer/img/skills/intro.png' %}" alt="intro"></picture>
+                </div>
+            </div>
+            <div class="page-intro__shadow"></div>
+        </div>
+    </section>
+{% endblock %}
+{% block content %}
+    <div class="page-content content-skills">
+        <h2 class="page-content__title content-skills__title">ТОП-10 навыков по годам</h2>
+        <div id="skill" class="content-skills__skill">2018:
+            QA, Python, SQL, Тестирование, Английский язык, Ruby, Java, Usability, Английский язык,
+            Веб-аналитика
+        </div>
+        <div id="skill" class="content-skills__skill">2019:
+            QA, Тестирование, Английский язык, Java, SQL, JavaScript, Selenium, IDE REST-assured,
+            Автоматизация тестирования, Test case
+        </div>
+        <div id="skill" class="content-skills__skill">2020:
+            QA, Тестирование, Python, SQL, Linux, Тестирование мобильных приложений, Работа в команде,
+            Git, Тестирование web-приложений
+        </div>
+        <div id="skill" class="content-skills__skill">2021:
+            Тестирование, QA, Linux, Работа в команде, SQL, Python, Английский язык, Обучение и
+            развитие, Git
+        </div>
+        <div id="skill" class="content-skills__skill">2022:
+            Тестирование, QA, Linux, Работа в команде, Python, SQL, Функциональное тестирование, Java,
+            Английский язык, Git
+        </div>
+    </div>
+{% endblock %}

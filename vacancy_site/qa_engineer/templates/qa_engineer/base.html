@@ -1,0 +1,80 @@
+<!-- Сообщаем браузеру как стоит обрабатывать эту страницу -->
+<!DOCTYPE html>
+
+{% load static %}
+
+<!-- Оболочка документа, указываем язык содержимого -->
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'qa_engineer/css/style.min.css' %}">
+    <title>{% block title %}Заголовок{% endblock %}</title>
+</head>
+<body>
+<div class="wrapper">
+    <header>
+        <div class="container">
+            <div class="header__row">
+                <img src="{% static 'qa_engineer/img/svgicons/logo.svg' %}" alt="logo">
+            </div>
+        </div>
+    </header>
+    <main class="content">
+        {% block section1 %} {% endblock %}
+        <section class="page-inner">
+            <div class="container">
+                <div class="page-inner__row">
+                    <aside class="page-aside aside-index">
+                        <ul class="page-aside__row aside-index__row">
+                            <a class="page-aside__link aside-index__link" href="{% url 'qa-home' %}">
+                                <li>Главная</li>
+                            </a>
+                            <a class="page-aside__link aside-index__link" href="{% url 'demand' %}">
+                                <li>Востребованность</li>
+                            </a>
+                            <a class="page-aside__link aside-index__link" href="{% url 'geography' %}">
+                                <li>География</li>
+                            </a>
+                            <a class="page-aside__link aside-index__link" href="{% url 'skills' %}">
+                                <li>Навыки</li>
+                            </a>
+                            <a class="page-aside__link aside-index__link" href="{% url 'recent-vacancies' %}">
+                                <li>Последние вакансии</li>
+                            </a>
+                            {% if user.is_authenticated %}
+                            <a class="page-aside__link aside-index__link" href="{% url 'logout' %}">
+                                <li>Выйти ({{user.username}})</li>
+                            </a>
+                            {% else %}
+                            <a class="page-aside__link aside-index__link" href="{% url 'login' %}">
+                                <li>Войти</li>
+                            </a>
+                            <a class="page-aside__link aside-index__link" href="{% url 'register' %}">
+                                <li>Зарегистрироваться</li>
+                            </a>
+                            {% endif %}
+                        </ul>
+                    </aside>
+                    {% block content %} {% endblock %}
+                </div>
+            </div>
+        </section>
+    </main>
+    <footer class="footer">
+        <div class="container">
+            <div class="footer__row">
+                <p>Автор: <br/>
+                    Озорнин Владимир Алексеевич<br/>
+                    РИ-210941
+                </p>
+            </div>
+        </div>
+    </footer>
+</div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js?_v=20230105125638"></script>
+<script src="{% static 'qa_engineer/js/app.min.js' %}?_v=20230105125638"></script>
+</body>
+
+</html>

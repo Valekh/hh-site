@@ -1,0 +1,9 @@
+{% extends "qa_engineer/base.html" %}
+{% load static %}
+{% block title %} {{ title }} {% endblock %}
+{% block section1 %}
+    {{ content.section1|safe }}
+{% endblock %}
+{% block content %}
+    {{ content.content|safe }}
+{% endblock %}

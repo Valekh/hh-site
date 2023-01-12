@@ -1,0 +1,54 @@
+<!-- Сообщаем браузеру как стоит обрабатывать эту страницу -->
+<!DOCTYPE html>
+
+{% load static %}
+
+<!-- Оболочка документа, указываем язык содержимого -->
+<html lang="ru">
+    <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'qa_engineer/css/style.min.css' %}">
+    <title>Войти</title>
+</head>
+    <body>
+        <div class="wrapper">
+            <header>
+    <div class="container">
+        <div class="header__row">
+            <img src="{% static 'qa_engineer/img/svgicons/logo.svg' %}" alt="logo">
+        </div>
+    </div>
+</header>
+            <main class="content">
+                <section class="page-inner">
+                    <div class="container">
+                        <div class="page-inner__form">
+                            <h1>Войти</h1>
+                            <form method="POST">
+                                {% csrf_token %}
+                                {{ form }}
+                                <button class="submit">Войти</button>
+                            </form>
+                            <p class="page-inner__redirect">У меня нет аккаунта <a href="{% url 'register' %}">Зарегистрироваться</a></p>
+                        </div>
+                    </div>
+                </section>
+            </main>
+            <footer class="footer">
+    <div class="container">
+        <div class="footer__row">
+            <p>Автор: <br />
+                Озорнин Владимир Алексеевич <br />
+                РИ-210941
+            </p>
+        </div>
+    </div>
+</footer>
+        </div>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script src="{% static 'qa_engineer/js/app.min.js' %}"></script>
+    </body>
+
+</html>

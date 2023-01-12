@@ -1,0 +1,43 @@
+{% extends "qa_engineer/base.html" %}
+{% load static %}
+{% block title %} География {% endblock %}
+{% block section1 %}
+    <section class="page-intro">
+        <div class="container">
+            <div class="page-intro__row">
+                <h1>География</h1>
+            </div>
+        </div>
+        <div class="page-intro__bg">
+            <div class="container">
+                <div class="page-intro__img intro-geography__img">
+                    <picture>
+                        <source srcset="{% static 'qa_engineer/img/geography/intro.webp' %}" type="image/webp">
+                        <img src="{% static 'qa_engineer/img/geography/intro.png' %}" alt="intro"></picture>
+                </div>
+            </div>
+            <div class="page-intro__shadow"></div>
+        </div>
+    </section>
+{% endblock %}
+{% block content %}
+    <div class="page-content content-geography">
+        <h2 class="page-content__title content-geography__title">Динамика уровня зарплат по годам</h2>
+        <div class="content-geography__img">
+            <picture>
+                <source srcset="{% static 'qa_engineer/img/geography/chart-one.webp' %}"
+                        type="image/webp">
+                <img src="{% static 'qa_engineer/img/geography/chart-one.png' %}" alt="chart-one">
+            </picture>
+        </div>
+        <h2 class="page-content__title content-geography__title">Динамика количества вакансий по
+            годам</h2>
+        <div class="content-geography__img">
+            <picture>
+                <source srcset="{% static 'qa_engineer/img/geography/chart-two.webp' %}"
+                        type="image/webp">
+                <img src="{% static 'qa_engineer/img/geography/chart-two.png' %}" alt="chart-two">
+            </picture>
+        </div>
+    </div>
+{% endblock %}
