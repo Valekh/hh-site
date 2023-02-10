@@ -1,5 +1,8 @@
 <h1> Туториал как написать сайт с вакансиями, регистрацией и CRUD на Django </h1>
 
+![image](https://user-images.githubusercontent.com/59338155/218063959-e9c242ce-8b10-4b99-9760-b64f91df1690.png)
+
+
 <h2> Начало и установка </h2>
 
 Устанавливаем фреймворк Django:
@@ -15,6 +18,9 @@
 В нашем случае, имя выбрано `qa_engineer`. В файл `settings.py` в список `INSTALLED_APPS =` добавляем класс из `qa_engineer/apps.py` - `'qa_engineer.apps.QaEngineerConfig'`
 
 <h2> Регистрация и вход на сайт </h2> 
+
+![image](https://user-images.githubusercontent.com/59338155/218064089-b1fb7f7a-cadd-49ec-a726-f84cf28bdb4f.png)
+
 Создаём раздел, отвечающий за работу с пользователями:
 
     python manage.py startapp users
@@ -170,6 +176,9 @@ def home(request):
 Все шаблоны лежат в папке `qa_engineer/templates/qa_engineer`.
 
 <h2> Получить и отобразить вакансии с hh.ru </h2>
+
+![image](https://user-images.githubusercontent.com/59338155/218064521-2195b4bb-d7af-4496-a7f4-05d7419d746b.png)
+
 <h3> Пишем скрипт </h3>
 
 В той же папке проекта, где лежат `qa_engineer`, `users` и `manage.py`, создаём папку `vacancies`, в которой создаём файл `__init__.py`, сообщающий питону, что эту
