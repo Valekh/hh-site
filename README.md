@@ -1,51 +1,85 @@
-<h1> Туториал как написать сайт с вакансиями, регистрацией и CRUD на Django </h1>
+<h1> Tutorial on How to Build a Website with Job Vacancies, Registration, and CRUD in Django </h1>
 
 ![image](https://user-images.githubusercontent.com/59338155/218063959-e9c242ce-8b10-4b99-9760-b64f91df1690.png)
 
+<h2> Getting Started and Installation </h2>
 
-<h2> Начало и установка </h2>
+Install the Django framework:
 
-Устанавливаем фреймворк Django:
-  
-    pip install django
-Создаём проект в Django (у меня name - vacancy_site):
+```
+pip install django
+```
 
-    django-admin startproject <name>
+Create a Django project (let's call it "vacancy_site"):
 
-Создаём первый и основной раздел сайта:
+```
+django-admin startproject <name>
+```
 
-    python manage.py startapp <name>
-В нашем случае, имя выбрано `qa_engineer`. В файл `settings.py` в список `INSTALLED_APPS =` добавляем класс из `qa_engineer/apps.py` - `'qa_engineer.apps.QaEngineerConfig'`
+Create the main app for the website:
 
-<h2> Регистрация и вход на сайт </h2> 
+```
+python manage.py startapp <name>
+```
+
+In this case, we've named the app "qa_engineer". In the file `settings.py`, add the app to the `INSTALLED_APPS` list:
+
+```python
+INSTALLED_APPS = [
+    # ... other installed apps ...
+    'qa_engineer.apps.QaEngineerConfig',
+    # ... other installed apps ...
+]
+```
+
+<h2> Registration and Login </h2> 
 
 ![image](https://user-images.githubusercontent.com/59338155/218064089-b1fb7f7a-cadd-49ec-a726-f84cf28bdb4f.png)
 
-Создаём раздел, отвечающий за работу с пользователями:
+Create a section for managing users:
 
-    python manage.py startapp users
-Также добавляем его в файл `setting.py` в список `INSTALLED_APPS =`, в этот раз `'users.apps.UsersConfig'`.
-В `users/views.py` прописываем код для регистрации:
+```
+python manage.py startapp users
+```
 
-```def register(request):
+Add this app to the `INSTALLED_APPS` list in `settings.py`:
+
+```python
+INSTALLED_APPS = [
+    # ... other installed apps ...
+    'users.apps.UsersConfig',
+    # ... other installed apps ...
+]
+```
+
+In `users/views.py`, implement the registration code:
+
+```python
+from django.contrib.auth.forms import UserCreationForm
+from django.shortcuts import render, redirect
+from django.contrib.auth import login
+
+def register(request):
     if request.method == 'POST':
-        form = UserRegisterForm(request.POST)
+        form = UserCreationForm(request.POST)
         if form.is_valid():
             new_user = form.save()
             login(request, new_user)
             return redirect('qa-home')
     else:
-        form = UserRegisterForm()
+        form = UserCreationForm()
     return render(request, 'users/register.html', {'form': form})
 ```
-Если пользователь отправил POST-запрос (т.е. ввёл данные), мы проверяем валидна ли форма (джанго проверяет, правильно ли введены данные, надёжный ли пароль). Если да - данные из формы сохраняются, создаётся новый пользователь, происходит перенаправление на главную страницу.
 
-Теперь нужно определить классы `UserRegisterForm` и класс для логина. Мы не используем дефолтные от Джанго для соблюдения вёрстки.
+Now, define the classes `UserRegisterForm` and the login class. We are using our own forms for custom styling.
 
-Создаём файл `users/models.py`, прописываем:
+In `users/models.py`, create the `UserRegisterForm`:
 
-```
-class UserRegisterForm(UserCreationForm):
+```python
+from django import forms
+from django.contrib.auth.models import User
+
+class UserRegisterForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ['username']
@@ -60,13 +94,15 @@ class UserRegisterForm(UserCreationForm):
         self.fields['username'].label = ""
         self.fields['password1'].label = ""
 
-        self.fields['username'].widget = TextInput(attrs={'class': 'form-control', 'placeholder': 'Ваш логин'})
-        self.fields['password1'].widget = PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Ваш пароль'})
+        self.fields['username'].widget = forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Your username'})
+        self.fields['password1'].widget = forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Your password'})
 ```
-Удаляем подтверждение пароля (соответствие вёрстке), help_text, названия форм (label), определяем placeholder (текст внутри форм).
 
-Прописываем такое же для формы логина, которое мы используем позже:
-```
+Implement the same for the login form:
+
+```python
+from django.contrib.auth.forms import AuthenticationForm
+
 class UserLoginForm(AuthenticationForm):
     model = User
 
@@ -76,52 +112,21 @@ class UserLoginForm(AuthenticationForm):
         self.fields['username'].label = ""
         self.fields['password'].label = ""
 
-        self.fields['username'].widget = TextInput(attrs={'class': 'form-control', 'placeholder': 'Ваш логин'})
-        self.fields['password'].widget = PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Ваш пароль'})
-```
-Чтобы юзер при нажатии на выход сразу выходил, а не попадал на страницу с просьбой подтверждения, пишем в `vacancy_site/settings.py`:
-
-    LOGOUT_REDIRECT_URL = "/"
-
-
-<h2> Основные urlpatterns </h2>
-
-Вводим все импорты в `vacancy_site/urls.py`:
-
-```
-from django.contrib import admin
-from django.contrib.auth import views as auth_views
-from django.urls import path, include
-from users import views as user_views
-from users.forms import UserLoginForm
-
-from django.conf import settings
-from django.conf.urls.static import static
+        self.fields['username'].widget = forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Your username'})
+        self.fields['password'].widget = forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Your password'})
 ```
 
-Прописываем все паттерны, по которому будет работать сайт:
+To make the user log out immediately without confirmation, add the following line to `vacancy_site/settings.py`:
 
+```python
+LOGOUT_REDIRECT_URL = "/"
 ```
-urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('summernote/', include('django_summernote.urls')),
-    path('', include('qa_engineer.urls')),
-    path('register/', user_views.register, name="register"),
-    path('login/', auth_views.LoginView.as_view(template_name='users/login.html', authentication_form=UserLoginForm), name="login"),
-    path('logout/', auth_views.LogoutView.as_view(template_name='users/logout.html'), name="logout"),
-]
-```
-Метод path принимает два аргумента: название url, которое будет отображаться в адресной строке; ссылка на нужный код; аргумент name опционален - название для паттерна. К примеру, в разделе регистрация, мы видим, что редирект совершается по названию паттерна.
-Все запросы первым делом у нас отправляются в qa_engineer, для этого мы используем include. Если там нет совпадений, Джанго возвращается проверять сюда.
-URL `admin` - раздел администрирования, `summernote` - модуль с CRUD, которое мы установим позже, `register` и `login/logout` - работа с юзерами. Регистрация ссылается на
-созданный нами метод, логин на стандартный от Django (но мы указали использовать нашу вёрстку и нашу созданную форму). `logout` перенаправляет на пустой шаблон, но
-это для галочки, у нас он не используется.
 
-<h2> Основной сайт - qa_engineer </h2>
+<h2> Main Website - qa_engineer </h2>
 
-Прописываем в файле `qa_engineer/urls.py` ссылки на наши методы, которые сейчас создадим:
+In `qa_engineer/urls.py`, define the URL patterns for the main pages:
 
-```
+```python
 from django.urls import path
 from . import views
 
@@ -134,13 +139,12 @@ urlpatterns = [
 ]
 ```
 
-Переходим в `qa_engineer` и прописываем методы для страниц:
+Implement the views for these pages in `qa_engineer/views.py`:
 
-```
+```python
 from django.shortcuts import render
 from vacancies.vacancies import get_yesterday_vacancies
 from .models import Post
-
 
 def get_context(name: str):
     content = \
@@ -148,21 +152,44 @@ def get_context(name: str):
          'title': name}
     return content
 
-
 def home(request):
-    content = get_context('Главная')
+    content = get_context('Home')
     return render(request, 'qa_engineer/index.html', content)
-```
-`get_context` нужен для удобства - мы получаем названия раздела и ищем в бд контент для его. Бд заполним потом. Остальные методы сделаны по аналогии с `home`, который получает
-контент из бд и рендерит шаблон, куда вставляет контент.
+``
 
-<h3> Шаблоны </h3>
-Вот так выглядят наши шаблоны:
+`
 
+Implement similar views for the other pages (`geography`, `demand`, `skills`).
+
+<h3> Templates </h3>
+Templates in Django extend a base template that contains common elements across all pages. Create a `qa_engineer/base.html` template with the following structure:
+
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{% block title %}{% endblock %}</title>
+    <!-- Other common head elements -->
+</head>
+<body>
+    <!-- Common body elements -->
+    <div class="section1">
+        {% block section1 %}{% endblock %}
+    </div>
+    <div class="content">
+        {% block content %}{% endblock %}
+    </div>
+    <!-- Other common body elements -->
+</body>
+</html>
 ```
+
+In other templates (e.g., `qa_engineer/index.html`), you can extend the base template and fill in the blocks:
+
+```html
 {% extends "qa_engineer/base.html" %}
 {% load static %}
-{% block title %} {{ title }} {% endblock %}
+{% block title %}{{ title }}{% endblock %}
 {% block section1 %}
     {{ content.section1|safe }}
 {% endblock %}
@@ -170,26 +197,19 @@ def home(request):
     {{ content.content|safe }}
 {% endblock %}
 ```
-`extends` отсылается на базовый шаблон, в котором содержится все элементы, присутствующих на всех страницах сайта (таким образом, нам не приходится писать везде одно и
-то же). В файле `base.html` есть блоки `block title`, `block section1` и `block content`, в эти блоки и вставляется содержимое блоков с теми же названиями здесь. Всё,
-что заключено в `{{ }}` - контент, переданный сюда в методе.
-Все шаблоны лежат в папке `qa_engineer/templates/qa_engineer`.
 
-<h2> Получить и отобразить вакансии с hh.ru </h2>
+<h2> Fetch and Display Vacancies from hh.ru </h2>
 
 ![image](https://user-images.githubusercontent.com/59338155/218064521-2195b4bb-d7af-4496-a7f4-05d7419d746b.png)
 
-<h3> Пишем скрипт </h3>
+<h3> Write a Script </h3>
 
-В той же папке проекта, где лежат `qa_engineer`, `users` и `manage.py`, создаём папку `vacancies`, в которой создаём файл `__init__.py`, сообщающий питону, что эту
-папку следует использовать как модуль. Затем создаём файл `vacancies.py`, в котором пишем:
+In the same project folder as `qa_engineer`, `users`, and `manage.py`, create a new folder named `vacancies`. Inside the `vacancies` folder, create an empty file named `__init__.py`, which tells Python to treat this folder as a module. Then, create a file named `vacancies.py`, and write the following code:
 
-```
+```python
 import requests
 from bs4 import BeautifulSoup
-
 from datetime import datetime, timedelta
-
 
 def get_yesterday_vacancies():
     today = datetime.now()
@@ -241,52 +261,54 @@ def get_yesterday_vacancies():
         result.append(fields)
 
     return result
- ```
- Сразу же прописываем `pip install bs4` для установки нужной библиотеки (она очищает текст от HTML-тегов, которые возвращает hh.ru). 
- Метод получает вчерашние вакансии, указывая в качестве даты вчерашний день (требование задания), и в цикле запрашивает подробную информацию по каждому из первых десяти.
- Полученные результаты приводит в нужный вид и возвращает.
- 
- В файл `qa_engineer/views.py` добавляем метод, обращающийся к нашему скрипту:
- 
- ```
- def recent_vacancies(request):
+```
+
+Note: Install `beautifulsoup4` and `requests` using `pip install beautifulsoup4 requests` if you haven't already.
+
+The `get_yesterday_vacancies()` function fetches yesterday's vacancies using the HH.ru API. It processes the data and returns a list of dictionaries with the relevant information.
+
+In `qa_engineer/views.py`, add a method to call our script:
+
+```python
+def recent_vacancies(request):
     vacancies = get_yesterday_vacancies()
     context = {
         'vacancies': vacancies
     }
     return render(request, "qa_engineer/recent-vacancies.html", context)
- ```
- 
- В `qa_engineer/recent-vacancies.html` цикл, обрабатывающий полученные данные:
- 
- ```
-  {% for vacancy in vacancies %}
-                    <div class="content-vacancy__item">
-                        <h3 id="vacancyName">{{ vacancy.name }}</h3>
-                        <p id="vacancyInfo">
-                          {{ vacancy.description|safe|truncatewords:"20"|linebreaks }}
-                          <a href="{{ vacancy.link }}" target="_blank">Подробнее</a>
-                        </p>
-                          <p id="vacancySkills">
-                            Навыки:
-                              {{ vacancy.key_skills }}
-                          </p>
-                          <p id="vacancyCompany"> {{ vacancy.employer_name }}</p>
-                          <p id="vacancySalary">{% if vacancy.salary != "" %} Оклад: {{ vacancy.salary }} {% endif%}</p>
-                          <p id="vacancyRegion"> {{ vacancy.area }} </p>
-                          <p id="vacancyDate"> {{vacancy.date }}</p>
-                    </div>
-                {% endfor %}
 ```
-Как можно заметить, цикл пропускает надпись "Оклад", если пункт "зарплата" пустой.
- 
- <h2> Как же сделать CRUD? </h2>
- 
- В файле `qa_engineer/models.py` (если нет - создать) создаём модель поста:
- 
- ```
- from django.db import models
 
+Create a template for displaying the vacancies, `qa_engineer/recent-vacancies.html`:
+
+```html
+{% for vacancy in vacancies %}
+<div class="content-vacancy__item">
+    <h3 id="vacancyName">{{ vacancy.name }}</h3>
+    <p id="vacancyInfo">
+        {{ vacancy.description|safe|truncatewords:"20"|linebreaks }}
+        <a href="{{ vacancy.link }}" target="_blank">Learn more</a>
+    </p>
+    <p id="vacancySkills">
+        Skills: {{ vacancy.key_skills }}
+    </p>
+    <p id="vacancyCompany">{{ vacancy.employer_name }}</p>
+    <p id="vacancySalary">{% if vacancy.salary != "" %} Salary: {{ vacancy.salary }} {% endif%}</p>
+    <p id="vacancyRegion">{{ vacancy
+
+.area }}</p>
+    <p id="vacancyDate">{{ vacancy.date }}</p>
+</div>
+{% endfor %}
+```
+
+In the above template, we use a loop to iterate through the vacancies list and display the relevant information for each vacancy. The `truncatewords` filter is used to limit the length of the description, and the `linebreaks` filter converts line breaks into HTML line breaks.
+
+<h2> Implementing CRUD </h2>
+
+In `qa_engineer/models.py` (if not already created), define a model for the posts:
+
+```python
+from django.db import models
 
 class Post(models.Model):
     title = models.CharField(max_length=140)
@@ -296,9 +318,7 @@ class Post(models.Model):
     def __str__(self):
         return self.title
 ```
- 
- Устанавливаем `summernote` по инструкции здесь: https://github.com/summernote/django-summernote
- 
- Перед тем, как в `qa_engineer/admin.py` ставить `admin.site.register(Post, SomeModelAdmin)`, оставляем `admin.site.register(Post)`, в админской заполняем в БД
- посты без форматирования (копипаст нужных разделов из html), ставим `admin.site.register(Post, SomeModelAdmin)` и перезагружаем - summernote всё приведёт в нужный вид.
- Нужные картинки придётся проставить вручную.
+
+Install `django-summernote` as per the instructions provided here: https://github.com/summernote/django-summernote
+
+Before registering the model in `qa_engineer/admin.py`, register it initially without using `SomeModelAdmin`. Fill the database with posts without formatting (copy and paste the required sections from the HTML). After that, use `admin.site.register(Post, SomeModelAdmin)` and reload the page to let `summernote` format the content. You may need to set the required images manually.
